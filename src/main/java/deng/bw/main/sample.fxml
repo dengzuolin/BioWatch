@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="742.0" prefWidth="1260.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="deng.bw.main.Controller">
+   <center>
+      <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <top>
+            <AnchorPane prefHeight="42.0" prefWidth="1056.0" style="-fx-border-color: gray; -fx-border-width: 0 0 1 0;" BorderPane.alignment="CENTER">
+               <children>
+                  <Label layoutX="20.0" layoutY="13.0" text="串口编号" AnchorPane.topAnchor="13.0" />
+                  <ComboBox fx:id="cbSerialList" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="149.0" AnchorPane.topAnchor="7.0" />
+                  <ComboBox fx:id="cbWatchMacList" layoutX="411.0" layoutY="7.0" prefHeight="25.0" prefWidth="252.0" AnchorPane.topAnchor="7.0" />
+                  <Button fx:id="btnSerialConnection" layoutX="226.0" layoutY="9.0" mnemonicParsing="false" onMouseClicked="#switchSerialPort" onTouchPressed="#switchSerialPort" text="打开串口" AnchorPane.topAnchor="9.0" />
+                  <Button fx:id="btnWatchConnection" disable="true" layoutX="667.0" layoutY="9.0" mnemonicParsing="false" onMouseClicked="#switchWatchConnection" onTouchPressed="#switchWatchConnection" text="连接" AnchorPane.topAnchor="9.0" />
+                  <Button fx:id="btnWatchScan" disable="true" layoutX="342.0" layoutY="8.0" mnemonicParsing="false" onMouseClicked="#scanWatch" onTouchPressed="#scanWatch" text="扫描腕表" AnchorPane.topAnchor="9.0" />
+               </children>
+            </AnchorPane>
+         </top>
+         <left>
+            <AnchorPane prefHeight="668.0" prefWidth="258.0" style="-fx-border-color: gray; -fx-border-width: 0 1 0 0;" BorderPane.alignment="CENTER">
+               <children>
+                  <Label layoutX="5.0" layoutY="3.0" text="腕表配置">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <TableView fx:id="tvWatchConfig" layoutX="11.0" layoutY="27.0" prefHeight="601.0" prefWidth="199.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="27.0">
+                    <columns>
+                      <TableColumn fx:id="tcConfigNames" prefWidth="122.0" text="名称" />
+                      <TableColumn fx:id="tcConfigValues" prefWidth="96.0" style="-fx-text-align: right;" text="设置值" />
+                    </columns>
+                  </TableView>
+               </children>
+            </AnchorPane>
+         </left>
+         <center>
+            <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+               <top>
+                  <AnchorPane prefHeight="63.0" prefWidth="856.0" style="-fx-border-color: gray; -fx-border-width: 0 0 1 0;" BorderPane.alignment="CENTER">
+                     <children>
+                        <Pane layoutX="14.0" layoutY="9.0" prefHeight="46.0" prefWidth="183.0" style="-fx-border-color: gray; -fx-border-radius: 10;">
+                           <children>
+                              <Label layoutX="14.0" layoutY="12.0" text="心率：">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                              <Label contentDisplay="RIGHT" layoutX="133.0" layoutY="12.0" text="bpm">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="lbBpm" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="68.0" layoutY="12.0" prefHeight="22.0" prefWidth="62.0" textAlignment="RIGHT" textOverrun="LEADING_ELLIPSIS">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </Pane>
+                        <Button fx:id="btnRecordSwitch" disable="true" layoutX="762.0" layoutY="12.0" mnemonicParsing="false" onMouseClicked="#switchRecordStatus" onTouchPressed="#switchRecordStatus" prefHeight="39.0" prefWidth="80.0" text="测试开始" AnchorPane.rightAnchor="10.0" />
+                        <Pane layoutX="205.0" layoutY="9.0" prefHeight="46.0" prefWidth="183.0" style="-fx-border-color: gray; -fx-border-radius: 10;">
+                           <children>
+                              <Label layoutX="14.0" layoutY="12.0" text="皮电：">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                              <Label contentDisplay="RIGHT" layoutX="155.0" layoutY="12.0" text="μs">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="lbOhm" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="59.0" layoutY="12.0" prefHeight="22.0" prefWidth="95.0" textAlignment="RIGHT" textOverrun="LEADING_ELLIPSIS">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </Pane>
+                        <Pane layoutX="397.0" layoutY="9.0" prefHeight="46.0" prefWidth="465.0" style="-fx-border-color: gray; -fx-border-radius: 10;">
+                           <children>
+                              <Label layoutX="14.0" layoutY="12.0" text="运动：">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                              <Label contentDisplay="RIGHT" layoutX="418.0" layoutY="12.0" text="㎡/s">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="lbAccX" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="63.0" layoutY="13.0" prefHeight="22.0" prefWidth="81.0" style="-fx-background-color: NavajoWhite;" textAlignment="RIGHT" textOverrun="LEADING_ELLIPSIS">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="lbAccY" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="151.0" layoutY="12.0" prefHeight="22.0" prefWidth="81.0" style="-fx-background-color: PaleGreen;" textAlignment="RIGHT" textOverrun="LEADING_ELLIPSIS">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="lbAccZ" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="240.0" layoutY="12.0" prefHeight="22.0" prefWidth="81.0" style="-fx-background-color: Coral;" textAlignment="RIGHT" textOverrun="LEADING_ELLIPSIS">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="lbAccSqt" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="329.0" layoutY="12.0" prefHeight="22.0" prefWidth="81.0" textAlignment="RIGHT" textOverrun="LEADING_ELLIPSIS">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </Pane>
+                     </children>
+                  </AnchorPane>
+               </top>
+               <center>
+                  <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: lightgray;" BorderPane.alignment="CENTER">
+                     <children>
+                        <TabPane layoutX="37.0" layoutY="31.0" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="1.0">
+                          <tabs>
+                            <Tab text="图表">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="686.0" prefWidth="1018.0">
+                                       <children>
+                                          <Label layoutX="513.0" layoutY="186.0" text="体温">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                          </Label>
+                                          <LineChart fx:id="lcBodyTemp" layoutX="513.0" layoutY="208.0" prefHeight="168.0" prefWidth="500.0" style="-fx-background-color: white;" AnchorPane.leftAnchor="513.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="209.0">
+                                            <xAxis>
+                                              <CategoryAxis side="BOTTOM" />
+                                            </xAxis>
+                                            <yAxis>
+                                              <NumberAxis side="LEFT" />
+                                            </yAxis>
+                                          </LineChart>
+                                          <LineChart fx:id="lcOhm" layoutY="307.0" prefHeight="167.0" prefWidth="511.0" style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="403.0">
+                                             <xAxis>
+                                                <CategoryAxis side="BOTTOM" />
+                                             </xAxis>
+                                             <yAxis>
+                                                <NumberAxis side="LEFT" />
+                                             </yAxis>
+                                          </LineChart>
+                                          <Label layoutX="14.0" layoutY="378.0" text="皮电">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                          </Label>
+                                          <Label layoutX="513.0" layoutY="378.0" text="运动" AnchorPane.leftAnchor="513.0" AnchorPane.topAnchor="378.0">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                          </Label>
+                                          <LineChart fx:id="lcAcc" layoutX="513.0" layoutY="307.0" prefHeight="169.0" prefWidth="500.0" style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="513.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="403.0">
+                                             <xAxis>
+                                                <CategoryAxis side="BOTTOM" />
+                                             </xAxis>
+                                             <yAxis>
+                                                <NumberAxis side="LEFT" />
+                                             </yAxis>
+                                          </LineChart>
+                                          <LineChart fx:id="lcBpm" layoutY="209.0" prefHeight="167.0" prefWidth="511.0" style="-fx-background-color: white;" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="209.0">
+                                             <xAxis>
+                                                <CategoryAxis side="BOTTOM" />
+                                             </xAxis>
+                                             <yAxis>
+                                                <NumberAxis side="LEFT" />
+                                             </yAxis>
+                                          </LineChart>
+                                          <Label layoutX="14.0" layoutY="186.0" text="心率">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                          </Label>
+                                          <LineChart fx:id="lcPulseWave" layoutX="-1.0" layoutY="23.0" prefHeight="163.0" prefWidth="1015.0" style="-fx-background-color: white;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="23.0">
+                                             <xAxis>
+                                                <CategoryAxis side="BOTTOM" />
+                                             </xAxis>
+                                             <yAxis>
+                                                <NumberAxis side="LEFT" />
+                                             </yAxis>
+                                          </LineChart>
+                                          <Label layoutX="14.0" layoutY="1.0" text="脉搏波">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </AnchorPane>
+                              </content>
+                            </Tab>
+                          </tabs>
+                        </TabPane>
+                     </children>
+                  </AnchorPane>
+               </center>
+            </BorderPane>
+         </center>
+      </BorderPane>
+   </center>
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="功能">
+            <items>
+              <MenuItem mnemonicParsing="false" text="测试工作台" />
+                  <MenuItem mnemonicParsing="false" text="历史数据" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+</BorderPane>

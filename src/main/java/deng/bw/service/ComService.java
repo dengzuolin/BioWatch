@@ -48,7 +48,7 @@ public class ComService {
     protected static byte WB_CMD_READ_MODE = (byte)0xB3;      // 工作模式（正常模式、精简工作模式、待机模式）
     protected static byte[] WB_CMD_START_RECORD = new byte[]{0x5A,0x08,(byte)0xAB,0x01,0x00,0x00,0x00,0x0E};
     protected static byte[] WB_CMD_STOP_RECORD = new byte[]{0x5A,0x08,(byte)0xAB,0x00,0x00,0x00,0x00,0x0D};
-    protected static String CSV_TITLE = "origin_pulseWave_0,origin_pulseWave_1,origin_pulseWave_2,origin_pulseWave_3,origin_pulseWave_4,origin_pulseWave_5,origin_pulseWave_6,origin_pulseWave_7,origin_pulseWave_8,origin_pulseWave_9,filter_pulseWave_0,filter_pulseWave_1,filter_pulseWave_2,filter_pulseWave_3,filter_pulseWave_4,filter_pulseWave_5,filter_pulseWave_6,filter_pulseWave_7,filter_pulseWave_8,filter_pulseWave_9,PPG,GSR0,GSR1,GSR2,GSR3,GSR4,GSR5,Motion_dataX0,Motion_dataX1,Motion_dataX2,Motion_dataX3,Motion_dataX4,Motion_dataX5,Motion_dataY0,Motion_dataY1,Motion_dataY2,Motion_dataY3,Motion_dataY4,Motion_dataY5,Motion_dataZ0,Motion_dataZ1,Motion_dataZ2,Motion_dataZ3,Motion_dataZ4,Motion_dataZ5,data_time";
+    protected static String CSV_TITLE = "origin_pulseWave_0,origin_pulseWave_1,origin_pulseWave_2,origin_pulseWave_3,origin_pulseWave_4,origin_pulseWave_5,origin_pulseWave_6,origin_pulseWave_7,origin_pulseWave_8,origin_pulseWave_9,filter_pulseWave_0,filter_pulseWave_1,filter_pulseWave_2,filter_pulseWave_3,filter_pulseWave_4,filter_pulseWave_5,filter_pulseWave_6,filter_pulseWave_7,filter_pulseWave_8,filter_pulseWave_9,PPG,GSR0,GSR1,GSR2,GSR3,GSR4,GSR5,GSR6,GSR7,GSR8,GSR9,Motion_dataX0,Motion_dataX1,Motion_dataX2,Motion_dataX3,Motion_dataX4,Motion_dataX5,Motion_dataX6,Motion_dataX7,Motion_dataX8,Motion_dataX9,Motion_dataY0,Motion_dataY1,Motion_dataY2,Motion_dataY3,Motion_dataY4,Motion_dataY5,Motion_dataY6,Motion_dataY7,Motion_dataY8,Motion_dataY9,Motion_dataZ0,Motion_dataZ1,Motion_dataZ2,Motion_dataZ3,Motion_dataZ4,Motion_dataZ5,Motion_dataZ6,Motion_dataZ7,Motion_dataZ8,Motion_dataZ9,data_time";
 
     protected static int WB_RW_CMD_OFFSET = 64;
 
@@ -93,10 +93,14 @@ public class ComService {
 
     String recordId = null;
     BufferedWriter csvWriter = null;
+    BufferedWriter csvWriter2 = null;
 
     JdbcTemplate jdbcTemplate;
 
     boolean saveRunningFlag = false;
+
+    int[] lastAcc = null;
+    Double lastGsrs = null;
 
     public ComService(Controller controller) {
         this.controller = controller;
@@ -419,6 +423,8 @@ public class ComService {
             try {
                 this.dbSaveBuffer.clear();
                 this.dataBuffer.clear();
+                this.lastAcc = null;
+                this.lastGsrs = null;
 
                 /*+++++++++++++++++++*/
 //                this.recordId = UUID.randomUUID().toString();
@@ -434,6 +440,10 @@ public class ComService {
                 File outFile = new File("out" + File.separator + csvFileName);
                 this.csvWriter = new BufferedWriter(new FileWriter(outFile));
                 this.csvWriter.write(CSV_TITLE + "\n");
+
+                String csvFileName2 = "export_" + dfmt.format(new Date()) + "-2.csv";
+                File outFile2 = new File("out" + File.separator + csvFileName2);
+                this.csvWriter2 = new BufferedWriter(new FileWriter(outFile2));
                 /*-----------------*/
 
                 serialPort.getOutputStream().write(WB_CMD_START_RECORD);
@@ -470,6 +480,10 @@ public class ComService {
                     this.csvWriter.flush();
                     this.csvWriter.close();
                     this.csvWriter = null;
+
+                    this.csvWriter2.flush();
+                    this.csvWriter2.close();
+                    this.csvWriter2 = null;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -644,6 +658,7 @@ public class ComService {
                 socket = new DatagramSocket();
 
                 SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss S");
+                SimpleDateFormat fmt2 = new SimpleDateFormat("HH:mm:ss");
                 while (c <= qlen) {
                     StorageData sdata =  this.dbSaveBuffer.poll();
                     StringBuilder line = new StringBuilder();
@@ -681,6 +696,23 @@ public class ComService {
                                 AccData ad = sdata.getAccDatas().get(i);
                                 line.append(",");
                                 line.append(ad.getX());
+
+                                /***** 写入第二个文件 *********/
+                                int ppg = sdata.getPpg();
+                                double gsr = sdata.getGsrs().get(i);
+                                double sqt = Math.sqrt(Math.pow(ad.getX(),2) + Math.pow(ad.getY(),2) + Math.pow(ad.getZ(),2));
+                                sqt = sqt/4200*9.86;
+                                try {
+                                    this.csvWriter2.write(fmt2.format(new Date(sdata.getTimestamp()))
+                                            + "," + String.valueOf(ppg)
+                                            + "," + String.valueOf((new BigDecimal(gsr)).setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue())
+                                            + "," + String.valueOf((new BigDecimal(sqt)).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue())
+                                            + "\n");
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+
+                                /****************************/
                             }
                             for (int i = 0; i < sdata.getAccDatas().size(); i++) {
                                 AccData ad = sdata.getAccDatas().get(i);

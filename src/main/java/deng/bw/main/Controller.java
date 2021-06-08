@@ -77,7 +77,7 @@ public class Controller implements Initializable {
     LineChart<String, Double> lcOhm;
     @FXML
     LineChart<String, Integer> lcAcc;
-    @FXML
+
     LineChart<String, Float> lcBodyTemp;
     @FXML
     TableView tvMeasureData;
@@ -155,6 +155,7 @@ public class Controller implements Initializable {
 
         lcOhm.getData().add(new XYChart.Series<>());
         lcOhm.setCreateSymbols(false);
+        lcOhm.setLegendVisible(false);
         lcOhm.getData().get(0).getNode().setStyle("-fx-stroke-width: 1px;");
         lcOhm.getXAxis().setTickLabelsVisible(false);
         lcOhm.getXAxis().setTickLength(1.0d);
@@ -165,18 +166,19 @@ public class Controller implements Initializable {
         lcAcc.getData().add(new XYChart.Series<>());
         lcAcc.getData().add(new XYChart.Series<>());
         lcAcc.setCreateSymbols(false);
+        lcAcc.setLegendVisible(false);
         lcAcc.getXAxis().setTickLabelsVisible(false);
         lcAcc.getXAxis().setTickLength(1.0d);
         lcAcc.getXAxis().setLabel("");
         initLineChart(lcAcc);
 
-        lcBodyTemp.getData().add(new XYChart.Series<>());
-        lcBodyTemp.setCreateSymbols(false);
-        lcBodyTemp.getData().get(0).getNode().setStyle("-fx-stroke-width: 1px;");
-        lcBodyTemp.getXAxis().setTickLabelsVisible(false);
-        lcBodyTemp.getXAxis().setTickLength(1.0d);
-        lcBodyTemp.getXAxis().setLabel("");
-        initLineChart(lcBodyTemp);
+//        lcBodyTemp.getData().add(new XYChart.Series<>());
+//        lcBodyTemp.setCreateSymbols(false);
+//        lcBodyTemp.getData().get(0).getNode().setStyle("-fx-stroke-width: 1px;");
+//        lcBodyTemp.getXAxis().setTickLabelsVisible(false);
+//        lcBodyTemp.getXAxis().setTickLength(1.0d);
+//        lcBodyTemp.getXAxis().setLabel("");
+//        initLineChart(lcBodyTemp);
     }
 
     @Override
@@ -335,18 +337,18 @@ public class Controller implements Initializable {
         ((XYChart.Series)lcAcc.getData().get(0)).getData().clear();
         ((XYChart.Series)lcAcc.getData().get(1)).getData().clear();
         ((XYChart.Series)lcAcc.getData().get(2)).getData().clear();
-        ((XYChart.Series)lcBodyTemp.getData().get(0)).getData().clear();
+//        ((XYChart.Series)lcBodyTemp.getData().get(0)).getData().clear();
     }
 
     public void switchRecordStatus() {
         ComService comService = getComService();
         if (comService.getSerialState().equals(SerialState.STANDBY)) {
-            btnRecordSwitch.setText("结束");
+            btnRecordSwitch.setText("结束采集");
             initCharts();
             initLabels();
             comService.startRecord();
         } else {
-            btnRecordSwitch.setText("测试开始");
+            btnRecordSwitch.setText("开始采集");
             comService.stopRecord();
         }
     }

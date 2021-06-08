@@ -31,7 +31,6 @@ public class ComEventListener implements SerialPortEventListener {
     List<Byte> dataBuffer = new ArrayList<>();
     boolean canBuffer = false;
 
-
     public ComEventListener(ComService service, InputStream ins) {
         this.service = service;
         this.ins = ins;
@@ -103,36 +102,75 @@ public class ComEventListener implements SerialPortEventListener {
                                 }
 
                                 // 三轴加速度
-                                int[] accX = new int[6];
-                                int[] accY = new int[6];
-                                int[] accZ = new int[6];
+                                int[] accX = new int[10];
+                                int[] accY = new int[10];
+                                int[] accZ = new int[10];
 
-                                accX[0] = (dataBuffer.get(ACC_1_OFFSETS[0] + 1) << 8) | (dataBuffer.get(ACC_1_OFFSETS[0]) & 0xFF);
-                                accY[0] = (dataBuffer.get(ACC_1_OFFSETS[1] + 1) << 8) | (dataBuffer.get(ACC_1_OFFSETS[1]) & 0xFF);
-                                accZ[0] = (dataBuffer.get(ACC_1_OFFSETS[2] + 1) << 8) | (dataBuffer.get(ACC_1_OFFSETS[2]) & 0xFF);
+                                accX[4] = (dataBuffer.get(ACC_1_OFFSETS[0] + 1) << 8) | (dataBuffer.get(ACC_1_OFFSETS[0]) & 0xFF);
+                                accY[4] = (dataBuffer.get(ACC_1_OFFSETS[1] + 1) << 8) | (dataBuffer.get(ACC_1_OFFSETS[1]) & 0xFF);
+                                accZ[4] = (dataBuffer.get(ACC_1_OFFSETS[2] + 1) << 8) | (dataBuffer.get(ACC_1_OFFSETS[2]) & 0xFF);
+                                if (service.lastAcc == null) {
+                                    for (int i = 0; i <= 3; i++) {
+                                        accX[i] = accX[4];
+                                        accY[i] = accY[4];
+                                        accZ[i] = accZ[4];
+                                    }
+                                } else {
+                                    double step;
+                                    int lastVal;
 
-                                accX[5] = (dataBuffer.get(ACC_2_OFFSETS[0] + 1) << 8) | (dataBuffer.get(ACC_2_OFFSETS[0]) & 0xFF);
-                                accY[5] = (dataBuffer.get(ACC_2_OFFSETS[1] + 1) << 8) | (dataBuffer.get(ACC_2_OFFSETS[1]) & 0xFF);
-                                accZ[5] = (dataBuffer.get(ACC_2_OFFSETS[2] + 1) << 8) | (dataBuffer.get(ACC_2_OFFSETS[2]) & 0xFF);
+                                    // X
+                                    lastVal = service.lastAcc[0];
+                                    step = (accX[4] - lastVal)/5.0;
+                                    accX[0] = (int) (step * 1 + lastVal * (0.95 + Math.random() * 0.1));
+                                    accX[1] = (int) (step * 2 + lastVal * (0.95 + Math.random() * 0.1));
+                                    accX[2] = (int) (step * 3 + lastVal * (0.95 + Math.random() * 0.1));
+                                    accX[3] = (int) (step * 4 + lastVal * (0.95 + Math.random() * 0.1));
+
+                                    // Y
+                                    lastVal = service.lastAcc[1];
+                                    step = (accY[4] - lastVal)/5.0;
+                                    accY[0] = (int) (step * 1 + lastVal * (0.95 + Math.random() * 0.1));
+                                    accY[1] = (int) (step * 2 + lastVal * (0.95 + Math.random() * 0.1));
+                                    accY[2] = (int) (step * 3 + lastVal * (0.95 + Math.random() * 0.1));
+                                    accY[3] = (int) (step * 4 + lastVal * (0.95 + Math.random() * 0.1));
+
+                                    // Z
+                                    lastVal = service.lastAcc[2];
+                                    step = (accZ[4] - lastVal)/5.0;
+                                    accZ[0] = (int) (step * 1 + lastVal * (0.95 + Math.random() * 0.1));
+                                    accZ[1] = (int) (step * 2 + lastVal * (0.95 + Math.random() * 0.1));
+                                    accZ[2] = (int) (step * 3 + lastVal * (0.95 + Math.random() * 0.1));
+                                    accZ[3] = (int) (step * 4 + lastVal * (0.95 + Math.random() * 0.1));
+                                }
+
+                                accX[9] = (dataBuffer.get(ACC_2_OFFSETS[0] + 1) << 8) | (dataBuffer.get(ACC_2_OFFSETS[0]) & 0xFF);
+                                accY[9] = (dataBuffer.get(ACC_2_OFFSETS[1] + 1) << 8) | (dataBuffer.get(ACC_2_OFFSETS[1]) & 0xFF);
+                                accZ[9] = (dataBuffer.get(ACC_2_OFFSETS[2] + 1) << 8) | (dataBuffer.get(ACC_2_OFFSETS[2]) & 0xFF);
+
+                                service.lastAcc = new int[3];
+                                service.lastAcc[0] = accX[9];
+                                service.lastAcc[1] = accY[9];
+                                service.lastAcc[2] = accZ[9];
 
                                 // 加速度插值
-                                double step = (accX[5] - accX[0])/5.0;
-                                accX[1]=(int)(step * 1 + accX[0]*(0.95+Math.random()*0.1));
-                                accX[2]=(int)(step * 2 + accX[0]*(0.95+Math.random()*0.1));
-                                accX[3]=(int)(step * 3 + accX[0]*(0.95+Math.random()*0.1));
-                                accX[4]=(int)(step * 4 + accX[0]*(0.95+Math.random()*0.1));
+                                double step = (accX[9] - accX[4])/5.0;
+                                accX[5]=(int)(step * 1 + accX[4]*(0.95+Math.random()*0.1));
+                                accX[6]=(int)(step * 2 + accX[4]*(0.95+Math.random()*0.1));
+                                accX[7]=(int)(step * 3 + accX[4]*(0.95+Math.random()*0.1));
+                                accX[8]=(int)(step * 4 + accX[4]*(0.95+Math.random()*0.1));
 
-                                step = (accY[5] - accY[0])/5.0;
-                                accY[1]=(int)(step * 1 + accY[0]*(0.95+Math.random()*0.1));
-                                accY[2]=(int)(step * 2 + accY[0]*(0.95+Math.random()*0.1));
-                                accY[3]=(int)(step * 3 + accY[0]*(0.95+Math.random()*0.1));
-                                accY[4]=(int)(step * 4 + accY[0]*(0.95+Math.random()*0.1));
+                                step = (accY[9] - accY[4])/5.0;
+                                accY[5]=(int)(step * 1 + accY[4]*(0.95+Math.random()*0.1));
+                                accY[6]=(int)(step * 2 + accY[4]*(0.95+Math.random()*0.1));
+                                accY[7]=(int)(step * 3 + accY[4]*(0.95+Math.random()*0.1));
+                                accY[8]=(int)(step * 4 + accY[4]*(0.95+Math.random()*0.1));
 
-                                step = (accZ[5] - accZ[0])/5.0;
-                                accZ[1]=(int)(step * 1 + accZ[0]*(0.95+Math.random()*0.1));
-                                accZ[2]=(int)(step * 2 + accZ[0]*(0.95+Math.random()*0.1));
-                                accZ[3]=(int)(step * 3 + accZ[0]*(0.95+Math.random()*0.1));
-                                accZ[4]=(int)(step * 4 + accZ[0]*(0.95+Math.random()*0.1));
+                                step = (accZ[9] - accZ[4])/5.0;
+                                accZ[5]=(int)(step * 1 + accZ[4]*(0.95+Math.random()*0.1));
+                                accZ[6]=(int)(step * 2 + accZ[4]*(0.95+Math.random()*0.1));
+                                accZ[7]=(int)(step * 3 + accZ[4]*(0.95+Math.random()*0.1));
+                                accZ[8]=(int)(step * 4 + accZ[4]*(0.95+Math.random()*0.1));
 
                                 for (int i = 0; i < accX.length; i++) {
                                     AccData ad = new AccData(accX[i], accY[i], accZ[i]);
@@ -140,42 +178,64 @@ public class ComEventListener implements SerialPortEventListener {
                                 }
 
                                 // 皮电
-                                double[] gsrs = new double[6];
+                                double[] gsrs = new double[10];
                                 int gsrVal1 = ((dataBuffer.get(OHM_1_OFFSET + 1) & 0x3F) << 8) | (dataBuffer.get(OHM_1_OFFSET) & 0xFF);
                                 int gsrRes1 = (dataBuffer.get(OHM_1_OFFSET + 1)&0xFF) >> 6;
                                 if  (gsrRes1 == 0) {
-                                    gsrs[0] = 1 / (gsrVal1*10.0) * 10e6;
+                                    gsrs[4] = 1 / (gsrVal1*10.0) * 10e6;
                                 } else if (gsrRes1 == 1) {
-                                    gsrs[0] = 1 / (gsrVal1*100.0) * 10e6;
+                                    gsrs[4] = 1 / (gsrVal1*100.0) * 10e6;
                                 } else if (gsrRes1 == 2) {
-                                    gsrs[0] = 1 / (gsrVal1*1000.0) * 10e6;
+                                    gsrs[4] = 1 / (gsrVal1*1000.0) * 10e6;
                                 } else if (gsrRes1 == 3) {
-                                    gsrs[0] = 1 / (gsrVal1*100000.0) * 10e6;
+                                    gsrs[4] = 1 / (gsrVal1*100000.0) * 10e6;
+                                }
+
+                                if (service.lastGsrs == null) {
+                                    gsrs[0] = gsrs[4];
+                                    gsrs[1] = gsrs[4];
+                                    gsrs[2] = gsrs[4];
+                                    gsrs[3] = gsrs[4];
+                                } else {
+                                    double lastVal = service.lastGsrs;
+                                    if (gsrs[4] == lastVal) {
+                                        gsrs[0] = lastVal;
+                                        gsrs[1] = lastVal;
+                                        gsrs[2] = lastVal;
+                                        gsrs[3] = lastVal;
+                                    } else {
+                                        step = (gsrs[4] - lastVal) / 5.0;
+                                        gsrs[0] = (step * 1 + lastVal * (0.95 + Math.random() * 0.1));
+                                        gsrs[1] = (step * 2 + lastVal * (0.95 + Math.random() * 0.1));
+                                        gsrs[2] = (step * 3 + lastVal * (0.95 + Math.random() * 0.1));
+                                        gsrs[3] = (step * 4 + lastVal * (0.95 + Math.random() * 0.1));
+                                    }
                                 }
 
                                 int gsrVal2 = ((dataBuffer.get(OHM_2_OFFSET + 1) & 0x3F) << 8) | (dataBuffer.get(OHM_2_OFFSET) & 0xFF);
                                 int gsrRes2 = (dataBuffer.get(OHM_2_OFFSET + 1) & 0xFF) >> 6;
                                 if  (gsrRes2 == 0) {
-                                    gsrs[5] = 1 / (gsrVal2*10.0) * 10e6;
+                                    gsrs[9] = 1 / (gsrVal2*10.0) * 10e6;
                                 } else if (gsrRes2 == 1) {
-                                    gsrs[5] = 1 / (gsrVal2*100.0) * 10e6;
+                                    gsrs[9] = 1 / (gsrVal2*100.0) * 10e6;
                                 } else if (gsrRes2 == 2) {
-                                    gsrs[5] = 1 / (gsrVal2*1000.0) * 10e6;
+                                    gsrs[9] = 1 / (gsrVal2*1000.0) * 10e6;
                                 } else if (gsrRes2 == 3) {
-                                    gsrs[5] = 1 / (gsrVal2*100000.0) * 10e6;
+                                    gsrs[9] = 1 / (gsrVal2*100000.0) * 10e6;
                                 }
+                                service.lastGsrs = gsrs[9];
 
-                                step = (gsrs[5] - gsrs[0])/5.0;
-                                if (gsrs[0] == gsrs[5]) {
-                                    gsrs[1] = gsrs[0];
-                                    gsrs[2] = gsrs[0];
-                                    gsrs[3] = gsrs[0];
-                                    gsrs[4] = gsrs[0];
+                                step = (gsrs[9] - gsrs[4])/5.0;
+                                if (gsrs[9] == gsrs[4]) {
+                                    gsrs[5] = gsrs[4];
+                                    gsrs[6] = gsrs[4];
+                                    gsrs[7] = gsrs[4];
+                                    gsrs[8] = gsrs[4];
                                 } else {
-                                    gsrs[1] = (step * 1 + gsrs[0] * (0.95 + Math.random() * 0.1));
-                                    gsrs[2] = (step * 1 + gsrs[0] * (0.95 + Math.random() * 0.1));
-                                    gsrs[3] = (step * 1 + gsrs[0] * (0.95 + Math.random() * 0.1));
-                                    gsrs[4] = (step * 1 + gsrs[0] * (0.95 + Math.random() * 0.1));
+                                    gsrs[5] = (step * 1 + gsrs[4] * (0.95 + Math.random() * 0.1));
+                                    gsrs[6] = (step * 2 + gsrs[4] * (0.95 + Math.random() * 0.1));
+                                    gsrs[7] = (step * 3 + gsrs[4] * (0.95 + Math.random() * 0.1));
+                                    gsrs[8] = (step * 4 + gsrs[4] * (0.95 + Math.random() * 0.1));
                                 }
                                 for (int i = 0; i < gsrs.length; i++) {
                                     Double gsr = new BigDecimal(gsrs[i]).setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue();
